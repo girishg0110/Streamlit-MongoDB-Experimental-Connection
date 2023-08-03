@@ -23,7 +23,7 @@ class MongoDBConnection(ExperimentalBaseConnection[MongoClient]):
             MONGODB_PASSWORD = st.secrets.get("MONGODB_PASSWORD")
             CLUSTER_ADDRESS = st.secrets.get("CLUSTER_ADDRESS")
         CONNECTION_STRING = f"mongodb+srv://{MONGODB_USERNAME}:{MONGODB_PASSWORD}@{CLUSTER_ADDRESS}/?retryWrites=true&w=majority"
-        return MongoClient(CONNECTION_STRING, server_api=ServerApi('1'))
+        return MongoClient(CONNECTION_STRING, connect=False)
 
     def cursor(self) -> Collection:
         db = self._instance[self.db_name]
