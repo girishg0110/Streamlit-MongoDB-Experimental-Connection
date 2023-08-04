@@ -2,8 +2,15 @@ from connection import MongoDBConnection
 import streamlit as st
 import json
 
-conn = st.experimental_connection(name = "mongodb", type = MongoDBConnection, 
-                                db_name = "seed-swap", collection_name = "offers")
+conn = st.experimental_connection(
+    name = "mongodb", 
+    type = MongoDBConnection, 
+    db_name = "seed-swap", 
+    collection_name = "offers",
+    MONGODB_USERNAME = st.secrets.get("MONGODB_USERNAME"),
+    MONGODB_PASSWORD = st.secrets.get("MONGODB_PASSWORD"),
+    CLUSTER_ADDRESS = st.secrets.get("CLUSTER_ADDRESS")
+)
 st.sidebar.title("MongoDB Experimental Connection")
 st.sidebar.write(
     '''Try out some queries on this MongoDB collection of seed-swapping offers from local gardeners!

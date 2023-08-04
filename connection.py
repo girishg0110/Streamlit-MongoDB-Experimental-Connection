@@ -3,27 +3,18 @@ from streamlit.connections import ExperimentalBaseConnection
 from streamlit.runtime.caching import cache_data
 
 from pymongo import MongoClient
-from pymongo.server_api import ServerApi
 from pymongo.collection import Collection
 
 class MongoDBConnection(ExperimentalBaseConnection[MongoClient]):
 
-    def __init__(self, db_name: str, collection_name: str, **kwargs):
+    def __init__(self, db_name, collection_name, **kwargs):
         super().__init__(**kwargs)
         self.db_name = db_name
         self.collection_name = collection_name
 
-    def _connect(self, **kwargs) -> MongoClient:
-        if "CLUSTER_ADDRESS" in kwargs:
-            MONGODB_USERNAME = kwargs.pop("MONGODB_USERNAME")
-            MONGODB_PASSWORD = kwargs.pop("MONGODB_PASSWORD")
-            CLUSTER_ADDRESS = kwargs.pop("CLUSTER_ADDRESS")
-        else:
-            MONGODB_USERNAME = st.secrets.get("MONGODB_USERNAME")
-            MONGODB_PASSWORD = st.secrets.get("MONGODB_PASSWORD")
-            CLUSTER_ADDRESS = st.secrets.get("CLUSTER_ADDRESS")
+    def _connect(self, MONGODB_USERNAME, MONGODB_PASSWORD, CLUSTER_ADDRESS, **kwargs) -> MongoClient:
         CONNECTION_STRING = f"mongodb+srv://{MONGODB_USERNAME}:{MONGODB_PASSWORD}@{CLUSTER_ADDRESS}/?retryWrites=true&w=majority"
-        return MongoClient(CONNECTION_STRING, server_api=ServerApi('1'))
+        return MongoClient(CONNECTION_STRING, connect=False)
 
     def cursor(self) -> Collection:
         db = self._instance[self.db_name]
